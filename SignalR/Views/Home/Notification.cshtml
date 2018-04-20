@@ -1,20 +1,36 @@
 ﻿
 @{
+   // Layout = null;
     ViewBag.Title = "Notification";
 }
 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="~/Scripts/jquery-1.10.2.min.js"></script> 
 @*<script src="~/Scripts/jquery-1.10.2.min.js"></script>*@
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script src="~/Scripts/jquery.validate.js"></script>
 <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
 
+
+<script>
+    function updatePage() {
+        var Id = $("#ddlUser").val();  
+        $("#selectedUserId").val(Id);
+        $("#userLabel").html("Hello " + Id);
+        $("#dvtxtArea").show();
+
+        $("#dfltOpt").html('select a recipient ');
+        $("#ddlUser").val("").attr("selected", "selected");
+
+    }
+</script>
 <div class="col-md-12">
     <div >
 
     </div>
 </div>
 
+<h2 id="userLabel">  Please Select An User<span id="lblUserName"></span></h2> 
+<input type="hidden" id="selectedUserId" />
 <div id="Notifications">
     <label id="NotificationsMsg">
 
@@ -22,11 +38,11 @@
 </div>
 
 <div class="col-xs-12 col-lg-6 col-lg-offset-3 col-md-8 col-md-offset-2 noti-form">
-    <form>
-        
+    
         <div class="form-group">
             <label for="exampleInputEmail1">Select Option</label>
-            <select class="form-control">
+            <select id="ddlUser" class="form-control" onchange="updatePage()">
+                <option id="dfltOpt" value="" selected>Select User Id</option>
                 <option>1</option>
                 <option>2</option>
                 <option>3</option>
@@ -34,18 +50,12 @@
                 <option>5</option>
             </select>
         </div>
-        <div class="form-group">
+        <div class="form-group" id="dvtxtArea" style="display:none">
             <label for="exampleInputEmail1">Text Area</label>
-            <textarea class="form-control" rows="5"></textarea>
-        </div>
+            <textarea id="msg" class="form-control" rows="5"></textarea>
         
-        <div class="form-group">
-            <button type="submit" class="btn btn-primary">Submit</button>
-        </div>
-        
-        
-        
-    </form>
+            <button type="button" id="send" class="btn btn-primary">Submit</button>
+        </div>                         
 </div>
 
 
@@ -54,17 +64,20 @@
 <script src="~/Scripts/jquery.signalR-2.2.3.min.js"></script>
 <script src="~/signalr/hubs"></script>
 
-
-
-<script>
+<script> 
     $(document).ready(function () {
-        //$("#Notifications").html('');
+       
     });
+</script>
 
+
+<script>  
     $(function () {
-        var notMsg = $.connection.notificationMsg;
-        notMsg.client.newMessage = function (data) {
-            
+
+        //client
+        var app = $.connection.notificationMsg;
+        app.client.newMessage = function (data) {
+
             $.each(data, function (i, val) {
                 console.log(val.NotificationMessage);
             });
@@ -72,9 +85,36 @@
             $('#NotificationsMsg').text(data);
         };
 
+        app.client.updateActiveUsers = function (users) {
+            // save name
+            $("#lblUserName").html($('#displayname').val());
+            var objArrayUser = (JSON.parse(users));
+            console.log(objArrayUser);
+            //empty previous options
+            $('#ddlUser').html('');
+            var ddlUsers = $("#ddlUser");
+            $(objArrayUser).each(function () {
+                var option = $("<option />");
+
+                //Set Customer Name in Text part.
+                option.html(this.name);
+
+                //Set Customer CustomerId in Value part.
+                option.val(this.connID);
+
+                //Add the Option element to DropDownList.
+                ddlUsers.append(option);
+            });
+
+        };
+
+        //server
         $.connection.hub.start().done(function () {
-            notMsg.server.getNotificationMsg();
+            $("#send").click(function () {
+                app.server.getNotificationMsg($("#ddlUser").val(), $("#msg").val());
+            });
         });
+
     });
 
 </script>
