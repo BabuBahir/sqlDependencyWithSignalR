@@ -12,15 +12,18 @@
 
 
 <script>
-    function updatePage() {
-        var Id = $("#ddlUser").val();  
-        $("#selectedUserId").val(Id);
-        $("#userLabel").html("Hello " + Id);
-        $("#dvtxtArea").show();
+    function updateFirstTime() {
+        if(!($("#selectedUserId").val())){ 
+            var Id = $("#ddlUser").val();  
+            $("#selectedUserId").val(Id);
+            $("#userLabel").html("Hello " + Id);
+            $("#dvtxtArea").show();
 
-        $("#dfltOpt").html('select a recipient ');
-        $("#ddlUser").val("").attr("selected", "selected");
-
+            $("#dfltOpt").html('select a recipient ');
+         
+            $("#ddlUser option[value='" + Id + "']").remove();
+            $("#ddlUser").val("").attr("selected", "selected");
+        }
     }
 </script>
 <div class="col-md-12">
@@ -41,13 +44,13 @@
     
         <div class="form-group">
             <label for="exampleInputEmail1">Select Option</label>
-            <select id="ddlUser" class="form-control" onchange="updatePage()">
+            <select id="ddlUser" class="form-control" onchange="updateFirstTime()">
                 <option id="dfltOpt" value="" selected>Select User Id</option>
-                <option>1</option>
-                <option>2</option>
-                <option>3</option>
-                <option>4</option>
-                <option>5</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
             </select>
         </div>
         <div class="form-group" id="dvtxtArea" style="display:none">
