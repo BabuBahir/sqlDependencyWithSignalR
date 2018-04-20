@@ -23,6 +23,10 @@
          
             $("#ddlUser option[value='" + Id + "']").remove();
             $("#ddlUser").val("").attr("selected", "selected");
+
+            var app = $.connection.notificationMsg;
+            app.server.getActiveUsers($("#selectedUserId").val(), $.connection.hub.id);
+
         }
     }
 </script>
@@ -79,13 +83,9 @@
 
         //client
         var app = $.connection.notificationMsg;
-        app.client.newMessage = function (data) {
-
-            $.each(data, function (i, val) {
-                console.log(val.NotificationMessage);
-            });
-
-            $('#NotificationsMsg').text(data);
+        app.client.sendMessage = function (from , msg) {
+             
+            $('#NotificationsMsg').text(msg);
         };
 
         app.client.updateActiveUsers = function (users) {
@@ -94,27 +94,27 @@
             var objArrayUser = (JSON.parse(users));
             console.log(objArrayUser);
             //empty previous options
-            $('#ddlUser').html('');
-            var ddlUsers = $("#ddlUser");
-            $(objArrayUser).each(function () {
-                var option = $("<option />");
+            //$('#ddlUser').html('');
+            //var ddlUsers = $("#ddlUser");
+            //$(objArrayUser).each(function () {
+            //    var option = $("<option />");
 
-                //Set Customer Name in Text part.
-                option.html(this.name);
+            //    //Set Customer Name in Text part.
+            //    option.html(this.name);
 
-                //Set Customer CustomerId in Value part.
-                option.val(this.connID);
+            //    //Set Customer CustomerId in Value part.
+            //    option.val(this.connID);
 
-                //Add the Option element to DropDownList.
-                ddlUsers.append(option);
-            });
+            //    //Add the Option element to DropDownList.
+            //    ddlUsers.append(option);
+            //});
 
         };
 
         //server
-        $.connection.hub.start().done(function () {
-            $("#send").click(function () {
-                app.server.getNotificationMsg($("#ddlUser").val(), $("#msg").val());
+        $.connection.hub.start().done(function () {           
+            $("#send").click(function () {                 
+                 app.server.sendNotificationMsg(  $("#selectedUserId").val(),  $("#ddlUser").val(),  $("#msg").val());                                  
             });
         });
 

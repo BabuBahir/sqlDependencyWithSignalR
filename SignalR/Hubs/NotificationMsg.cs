@@ -19,10 +19,12 @@ namespace SignalR.Hubs
             Clients.All.NewMessage(msgs);
         }
 
-        public void GetNotificationMsg(string name , string msg)
-        {
-            List<NotificationDetails> msgs = NotificationService.GetAllNotificationDetails();
-            Clients.All.NewMessage(msgs);
+        public void sendNotificationMsg(string from , string to , string msg)
+        {              
+            //List<NotificationDetails> msgs = NotificationService.GetAllNotificationDetails();
+            //Clients.All.NewMessage(msgs);
+            var touser = UserHandler.chatusers.Where(x => x.name == to).FirstOrDefault();
+            Clients.Client(touser.connID).sendMessage(from, msg);
 
             //NotificationContext db = new NotificationContext();
             //UnitOfWork<NotificationDetails> UOW = new UnitOfWork<NotificationDetails>(db);
@@ -55,14 +57,13 @@ namespace SignalR.Hubs
             return base.OnDisconnected(stopCalled);
         }
 
-        public async void saveUserName(string name, string connID)
+        public void getActiveUsers( string name, string connID)
         {
             var index = UserHandler.chatusers.FindIndex(x => x.connID == connID);
             UserHandler.chatusers.ElementAt(index).name = name;
 
             var jsonObj = JsonConvert.SerializeObject(UserHandler.chatusers);
-            await Clients.All.updateActiveUsers(jsonObj);
-
+            Clients.All.updateActiveUsers(jsonObj);
         }
 
 
