@@ -90,5 +90,22 @@ namespace SignalR.Data
             }
            
         }
+
+
+        #region user detail
+        public void SaveUserDetails(UserDetails ud)
+        {
+            try
+            {
+                db.UserDetails.Add(ud);
+                db.SaveChangesAsync();
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            } 
+        }
+        #endregion
     }
 }

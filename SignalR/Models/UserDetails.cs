@@ -15,5 +15,7 @@ namespace SignalR.Models
         public string LoginId { get; set; }
         public string Name { get; set; }
         public string Pswd { get; set; }
+
+        public string SignalrId { get; set; }
     }
 }

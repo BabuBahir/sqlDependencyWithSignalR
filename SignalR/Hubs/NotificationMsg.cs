@@ -32,17 +32,16 @@ namespace SignalR.Hubs
             SqlWatcher w = new SqlWatcher(connectionString, sqlQueue, listenerQuery);
             w.Start();
 
-            NotificationDetails nd = new NotificationDetails() {
-                NotificationId =2,
+            NotificationService _ns = new NotificationService();
+
+            NotificationDetails nd = new NotificationDetails() {                 
                 UserId =2,
                 NotificationMessage = msg,               
                 CreatedDateTime = DateTime.Now
             };
-
-            NotificationService _ns = new NotificationService();
+            
                _ns.SaveNotification(nd);
-
-            Thread.Sleep(4000);
+             
             Clients.Client(touser.connID).sendMessage(from, msg);
             Clients.Caller.notifyMessageDelivered(touser.name);
             
@@ -68,6 +67,17 @@ namespace SignalR.Hubs
         {
             var index = UserHandler.chatusers.FindIndex(x => x.connID == connID);
             UserHandler.chatusers.ElementAt(index).name = name;
+
+            UserDetails ud = new UserDetails()
+            {                 
+                LoginId = name,
+                Name = name,
+                Pswd ="1234",
+                SignalrId = connID
+            };
+
+            NotificationService _ns = new NotificationService();
+            _ns.SaveUserDetails(ud);
 
             var jsonObj = JsonConvert.SerializeObject(UserHandler.chatusers);
             Clients.All.updateActiveUsers(jsonObj);

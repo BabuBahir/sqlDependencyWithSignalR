@@ -68,11 +68,23 @@ namespace SignalR.Service
             return null;
         }
 
-        public  void SaveNotification(NotificationDetails nd)
+
+        #region notification
+        public void SaveNotification(NotificationDetails nd)
         {
             NotificationDAL notificationDAL = new NotificationDAL();
-               notificationDAL.SaveNotification(nd);
+            notificationDAL.SaveNotification(nd);
         }
+        #endregion
+
+        #region user detail
+        public void SaveUserDetails(UserDetails ud)
+        {
+            NotificationDAL notificationDAL = new NotificationDAL();
+            notificationDAL.SaveUserDetails(ud);
+        }
+        #endregion
+
     }
 }
 
