@@ -11,6 +11,7 @@ namespace SignalR.Service
     public class NotificationService
     {
         
+
         public static List<NotificationDetails> GetAllNotificationDetails()
         {
             try
@@ -65,6 +66,12 @@ namespace SignalR.Service
 
             }
             return null;
+        }
+
+        public  void SaveNotification(NotificationDetails nd)
+        {
+            NotificationDAL notificationDAL = new NotificationDAL();
+               notificationDAL.SaveNotification(nd);
         }
     }
 }

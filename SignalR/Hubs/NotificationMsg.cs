@@ -8,11 +8,13 @@ using GenericRepository;
 using SignalR.Service;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using System.Threading;
 
 namespace SignalR.Hubs
 {
     public class NotificationMsg : Hub
     {
+         
         public void GetNotification()
         {
             List<NotificationDetails> msgs = new List<NotificationDetails>();
@@ -20,25 +22,30 @@ namespace SignalR.Hubs
         }
 
         public void sendNotificationMsg(string from , string to , string msg)
-        {              
-            //List<NotificationDetails> msgs = NotificationService.GetAllNotificationDetails();
-            //Clients.All.NewMessage(msgs);
-            var touser = UserHandler.chatusers.Where(x => x.connID == to).FirstOrDefault();            
+        {                           
+            var touser = UserHandler.chatusers.Where(x => x.connID == to).FirstOrDefault();
+
+            string connectionString = @"Data Source=DOTNETSERVER\SQLEXPRESS;Initial Catalog=SignalRDemo;  user id=sa;password=C1tytech;  ";
+            string sqlQueue = @"NamesQueue";
+            //Listener query restrictions: http://msdn.microsoft.com/en-us/library/aewzkxxh.aspx
+            string listenerQuery = "SELECT [NotificationId],[UserId],[NotificationMessage],[CreatedDateTime],[IsSeen] FROM[dbo].[NotificationDetails] ";
+            SqlWatcher w = new SqlWatcher(connectionString, sqlQueue, listenerQuery);
+            w.Start();
+
+            NotificationDetails nd = new NotificationDetails() {
+                NotificationId =2,
+                UserId =2,
+                NotificationMessage = msg,               
+                CreatedDateTime = DateTime.Now
+            };
+
+            NotificationService _ns = new NotificationService();
+               _ns.SaveNotification(nd);
+
+            Thread.Sleep(4000);
             Clients.Client(touser.connID).sendMessage(from, msg);
             Clients.Caller.notifyMessageDelivered(touser.name);
-            //NotificationContext db = new NotificationContext();
-            //UnitOfWork<NotificationDetails> UOW = new UnitOfWork<NotificationDetails>(db);
-            //try
-            //{
-            //    int maxid = UOW.ModelRepository.GetAll().Max(f => f.NotificationId);
-            //    var msg = UOW.ModelRepository.GetById(maxid);
-            //    UOW.Dispose();
-            //    Clients.All.NewMessage(msg);
-            //}
-            //catch(Exception ex)
-            //{
-
-            //}
+            
         }
 
         public override Task OnConnected()

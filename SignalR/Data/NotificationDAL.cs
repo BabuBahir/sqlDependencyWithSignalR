@@ -2,6 +2,7 @@
 using SignalR.Models;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
 
@@ -73,6 +74,21 @@ namespace SignalR.Data
 
             }
             return null;
+        }
+
+        public  void SaveNotification(NotificationDetails nd)
+        { 
+            try
+            {
+                db.NotificationDetails.Add(nd);
+                db.SaveChanges();
+                  
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+           
         }
     }
 }
