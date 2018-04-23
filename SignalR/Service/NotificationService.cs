@@ -83,6 +83,13 @@ namespace SignalR.Service
             NotificationDAL notificationDAL = new NotificationDAL();
             notificationDAL.SaveUserDetails(ud);
         }
+
+        public int GetuserIdBYSignalRId(string signalRID)
+        {
+            NotificationDAL notificationDAL = new NotificationDAL();
+            var userid =notificationDAL.GetuserIdBYSignalRId(signalRID);
+            return userid;
+        }
         #endregion
 
     }

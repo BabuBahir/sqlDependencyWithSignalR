@@ -34,8 +34,8 @@ namespace SignalR.Hubs
 
             NotificationService _ns = new NotificationService();
 
-            NotificationDetails nd = new NotificationDetails() {                 
-                UserId =2,
+            NotificationDetails nd = new NotificationDetails() {
+                UserId = _ns.GetuserIdBYSignalRId(touser.connID),
                 NotificationMessage = msg,               
                 CreatedDateTime = DateTime.Now
             };

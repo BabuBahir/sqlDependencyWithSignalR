@@ -106,6 +106,19 @@ namespace SignalR.Data
                 throw ex;
             } 
         }
+
+        public int GetuserIdBYSignalRId(string signalRID)
+        {
+            try
+            {
+               var user = db.UserDetails.Where(x => x.SignalrId.Equals(signalRID)).FirstOrDefault();
+                return user.UserId;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
         #endregion
     }
 }
