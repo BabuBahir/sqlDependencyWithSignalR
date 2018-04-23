@@ -14,23 +14,27 @@
 
 <script>
     function updateFirstTime() {
-        if(!($("#selectedUserId").val())){ 
-            var Id = $("#ddlUser").val();  
-            $("#selectedUserId").val(Id);
+        if ($("#userName").val()) {
+            var Id = $("#userName").val();
+            $("#currentUserId").val(Id);
             $("#userLabel").html("Hello " + Id);
+
+            $("#dvUserName").hide();
+            $("#dvSelectRecipient").show();
             $("#dvtxtArea").show();
-
-            $("#dfltOpt").html('select a recipient ');
-         
-            $("#ddlUser option[value='" + Id + "']").remove();
-            $("#ddlUser").val("").attr("selected", "selected");
-
+           
             var app = $.connection.notificationMsg;
-            app.server.getActiveUsers($("#selectedUserId").val(), $.connection.hub.id);
-
+            app.server.getActiveUsers($("#currentUserId").val(), $.connection.hub.id);
+        } else {
+            new PNotify({
+                title: 'Oh No!',
+                text: 'User Name Cannot Be blank',
+                type: 'error'
+            });
         }
     }
 </script>
+
 <div class="col-md-12">
     <div >
 
@@ -38,47 +42,45 @@
 </div>
 
 <h2 id="userLabel">  Please Select An User<span id="lblUserName"></span></h2> 
-<input type="hidden" id="selectedUserId" />
+<input type="hidden" id="currentUserId" />
 <div id="Notifications">
     <label id="NotificationsMsg">
 
     </label>
 </div>
 
-<div class="col-xs-12 col-lg-6 col-lg-offset-3 col-md-8 col-md-offset-2 noti-form">
-    
-        <div class="form-group">
-            <label for="exampleInputEmail1">Select Option</label>
-            <select id="ddlUser" class="form-control" onchange="updateFirstTime()">
-                <option id="dfltOpt" value="" selected>Select User Id</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-            </select>
+<div class="col-xs-12 col-lg-6 col-lg-offset-3 col-md-8 col-md-offset-2 noti-form">    
+        <div class="form-group" id="dvUserName">
+            <table class="table table-responsive">
+                <tr>
+                    <td>
+                        <label for="exampleInputEmail1">Enter User Name</label> 
+                    </td>
+                    <td>
+                        <input type="text" placeholder="User Name" id="userName" />
+                    </td>
+                    <td> 
+                          <button type="button" class="btn btn-default"  onclick="updateFirstTime()"> Enter</button>
+                    </td>
+                </tr>
+            </table>                                     
         </div>
-        <div class="form-group" id="dvtxtArea" style="display:none">
-            <label for="exampleInputEmail1">Text Area</label>
-            <textarea id="msg" class="form-control" rows="5"></textarea>
+
+    <div class="form-group" id="dvSelectRecipient" style="display:none">
+        <label>Select a Recipient  </label>
+        <select id="ddlUser">            
+        </select>
+    </div>
+    <div class="form-group" id="dvtxtArea" style="display:none">
+        <label for="exampleInputEmail1">Text Area</label>
+        <textarea id="msg" class="form-control" rows="5"></textarea>
         
-            <button type="button" id="send" class="btn btn-primary">Submit</button>
-        </div>                         
+        <button type="button" id="send" class="btn btn-primary">Submit</button>
+    </div>                         
 </div>
-
-
-
 
 <script src="~/Scripts/jquery.signalR-2.2.3.min.js"></script>
 <script src="~/signalr/hubs"></script>
-
-<script> 
-    $(document).ready(function () {
-       
-    });
-</script>
-
-
 <script>  
     $(function () {
 
@@ -100,24 +102,22 @@
         app.client.updateActiveUsers = function (users) {
             // save name
             $("#lblUserName").html($('#displayname').val());
-            var objArrayUser = (JSON.parse(users));
-            
-            //empty previous options
-            //$('#ddlUser').html('');
-            //var ddlUsers = $("#ddlUser");
-            //$(objArrayUser).each(function () {
-            //    var option = $("<option />");
+            var objArrayUser = (JSON.parse(users));                       
+         
+            $select = $("#ddlUser");
+            var listitems = '';
 
-            //    //Set Customer Name in Text part.
-            //    option.html(this.name);
-
-            //    //Set Customer CustomerId in Value part.
-            //    option.val(this.connID);
-
-            //    //Add the Option element to DropDownList.
-            //    ddlUsers.append(option);
-            //});
-
+            if (objArrayUser.length < 2) {
+             //   $('#dvSelectRecipient   ').html(" No Active Users ");
+            } else {
+                $.each(objArrayUser, function (key, value) {
+                    if (value.connID != $.connection.hub.id && (value.name != "")) { //exclude self
+                         
+                        listitems += '<option value=' + value.connID + '>' + value.name + '</option>';
+                    }
+                });
+                $select.html(listitems);
+            }
         };
 
         //server
@@ -127,7 +127,7 @@
                 var recipient = $("#ddlUser").val();
                 console.log(recipient);
                 if (recipient) {
-                    app.server.sendNotificationMsg($("#selectedUserId").val(), recipient, msg);
+                    app.server.sendNotificationMsg($("#currentUserId").val(), recipient, msg);
                 } else {
                     new PNotify({
                         title: 'Oh No!',

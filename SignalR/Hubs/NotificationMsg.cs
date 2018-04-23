@@ -23,9 +23,9 @@ namespace SignalR.Hubs
         {              
             //List<NotificationDetails> msgs = NotificationService.GetAllNotificationDetails();
             //Clients.All.NewMessage(msgs);
-            var touser = UserHandler.chatusers.Where(x => x.name == to).FirstOrDefault();            
+            var touser = UserHandler.chatusers.Where(x => x.connID == to).FirstOrDefault();            
             Clients.Client(touser.connID).sendMessage(from, msg);
-            Clients.Caller.notifyMessageDelivered(to);
+            Clients.Caller.notifyMessageDelivered(touser.name);
             //NotificationContext db = new NotificationContext();
             //UnitOfWork<NotificationDetails> UOW = new UnitOfWork<NotificationDetails>(db);
             //try
@@ -52,7 +52,7 @@ namespace SignalR.Hubs
         {             
             UserHandler.chatusers.RemoveAll(x => x.connID == Context.ConnectionId.ToString());
             var jsonObj = JsonConvert.SerializeObject(UserHandler.chatusers);
-            Clients.Caller.updateActiveUsers(jsonObj);
+            Clients.All.updateActiveUsers(jsonObj);
 
             return base.OnDisconnected(stopCalled);
         }
