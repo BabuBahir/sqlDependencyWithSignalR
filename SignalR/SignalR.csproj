@@ -224,6 +224,7 @@
     <Compile Include="Models\UserDetails.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Service\NotificationService.cs" />
+    <Compile Include="SqlDependency\SqlWatcher.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>

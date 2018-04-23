@@ -108,7 +108,7 @@
             var listitems = '';
 
             if (objArrayUser.length < 2) {
-             //   $('#dvSelectRecipient   ').html(" No Active Users ");
+                $("#ddlUser").empty();
             } else {
                 $.each(objArrayUser, function (key, value) {
                     if (value.connID != $.connection.hub.id && (value.name != "")) { //exclude self

@@ -1,5 +1,6 @@
 ﻿using GenericRepository;
 using SignalR.Models;
+using SignalR.Service;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,7 +19,13 @@ namespace SignalR.Controllers
         public ActionResult Notification()
         {
             UnitOfWork<UserDetails> UOW = new UnitOfWork<UserDetails>(db);
-            
+
+            string connectionString = @"Data Source=DOTNETSERVER\SQLEXPRESS;Initial Catalog=SignalRDemo;  user id=sa;password=C1tytech;  ";
+            string sqlQueue = @"NamesQueue";
+            //Listener query restrictions: http://msdn.microsoft.com/en-us/library/aewzkxxh.aspx
+            string listenerQuery = " select Name from [dbo].[UserDetails]";
+            SqlWatcher w = new SqlWatcher(connectionString, sqlQueue, listenerQuery);
+            w.Start();
             return View();
         }
 
