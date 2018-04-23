@@ -3,13 +3,14 @@
    // Layout = null;
     ViewBag.Title = "Notification";
 }
-<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+ 
 <script src="~/Scripts/jquery-1.10.2.min.js"></script> 
 @*<script src="~/Scripts/jquery-1.10.2.min.js"></script>*@
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+ 
 <script src="~/Scripts/jquery.validate.js"></script>
 <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
-
+<script src="~/Scripts/pnotify/pnotify.custom.min.js"></script>
+<link href="~/Scripts/pnotify/pnotify.custom.min.css" rel="stylesheet" />
 
 <script>
     function updateFirstTime() {
@@ -85,14 +86,22 @@
         var app = $.connection.notificationMsg;
         app.client.sendMessage = function (from , msg) {
              
-            $('#NotificationsMsg').text(msg);
+            $('#NotificationsMsg').append(msg);
         };
+
+        app.client.notifyMessageDelivered = function (to) {
+            new PNotify({
+                title: 'Success!',
+                text: 'Message Deliverd to ' + to,
+                type: 'success'
+            });
+        }
 
         app.client.updateActiveUsers = function (users) {
             // save name
             $("#lblUserName").html($('#displayname').val());
             var objArrayUser = (JSON.parse(users));
-            console.log(objArrayUser);
+            
             //empty previous options
             //$('#ddlUser').html('');
             //var ddlUsers = $("#ddlUser");
@@ -113,8 +122,19 @@
 
         //server
         $.connection.hub.start().done(function () {           
-            $("#send").click(function () {                 
-                 app.server.sendNotificationMsg(  $("#selectedUserId").val(),  $("#ddlUser").val(),  $("#msg").val());                                  
+            $("#send").click(function () {
+                var msg = $("#msg").val();
+                var recipient = $("#ddlUser").val();
+                console.log(recipient);
+                if (recipient) {
+                    app.server.sendNotificationMsg($("#selectedUserId").val(), recipient, msg);
+                } else {
+                    new PNotify({
+                        title: 'Oh No!',
+                        text: 'Please select a recipient',
+                        type: 'error'
+                    });
+                }
             });
         });
 

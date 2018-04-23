@@ -23,9 +23,9 @@ namespace SignalR.Hubs
         {              
             //List<NotificationDetails> msgs = NotificationService.GetAllNotificationDetails();
             //Clients.All.NewMessage(msgs);
-            var touser = UserHandler.chatusers.Where(x => x.name == to).FirstOrDefault();
+            var touser = UserHandler.chatusers.Where(x => x.name == to).FirstOrDefault();            
             Clients.Client(touser.connID).sendMessage(from, msg);
-
+            Clients.Caller.notifyMessageDelivered(to);
             //NotificationContext db = new NotificationContext();
             //UnitOfWork<NotificationDetails> UOW = new UnitOfWork<NotificationDetails>(db);
             //try
