@@ -25,7 +25,8 @@ namespace SignalR.Hubs
         {                           
             var touser = UserHandler.chatusers.Where(x => x.connID == to).FirstOrDefault();
 
-            string connectionString = @"Data Source=DOTNETSERVER\SQLEXPRESS;Initial Catalog=SignalRDemo;  user id=sa;password=C1tytech;  ";
+         //   string connectionString = @"Data Source=DOTNETSERVER\SQLEXPRESS;Initial Catalog=SignalRDemo;  user id=sa;password=C1tytech;  ";
+            string connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["SqlDependencyConfig"].ConnectionString;
             string sqlQueue = @"NamesQueue";
             //Listener query restrictions: http://msdn.microsoft.com/en-us/library/aewzkxxh.aspx
             string listenerQuery = "SELECT [NotificationId],[UserId],[NotificationMessage],[CreatedDateTime],[IsSeen] FROM[dbo].[NotificationDetails] ";
