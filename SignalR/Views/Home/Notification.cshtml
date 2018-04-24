@@ -87,8 +87,7 @@
         //client
         var app = $.connection.notificationMsg;
         app.client.sendMessage = function (from , msg) {
-             
-            $('#NotificationsMsg').append(msg);
+            alert(msg);
         };
 
         app.client.notifyMessageDelivered = function (to) {
