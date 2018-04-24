@@ -83,3 +83,5 @@ namespace SignalR.Service
 
 
 //NotificationService
+
+    //https://stackoverflow.com/questions/20503286/using-sqldependency-with-named-queues
